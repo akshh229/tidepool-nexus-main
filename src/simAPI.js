@@ -18,9 +18,7 @@ let _initialized = false;
 // ── Internal helpers ───────────────────────────────────
 
 function _startFirstTrial() {
-  const config = trialManager.startNextTrial();
-  world.reset(config);
-  network.resetStates();
+  trialManager.startNextTrial(world, network);
   scorer.reset();
 }
 
@@ -31,9 +29,7 @@ function _onTrialEnd() {
   if (trialManager.isComplete()) {
     emit('allTrialsComplete', trialManager.getAggregateScores());
   } else {
-    const config = trialManager.startNextTrial();
-    world.reset(config);
-    network.resetStates();
+    trialManager.startNextTrial(world, network);
     scorer.reset();
   }
 }
@@ -117,6 +113,7 @@ export const simAPI = {
   },
 
   async mountBrainCanvas(canvas) {
+    if (!network) return;
     const { BrainView } = await import('./viz/brainView.js');
     brainView = new BrainView(canvas);
     brainView.init(network);
@@ -125,6 +122,7 @@ export const simAPI = {
 
   // ── Control ──────────────────────────────────────────
   start() {
+    if (!world || !network) return;
     if (_running) return;
     _running = true;
     _loop();
@@ -139,6 +137,7 @@ export const simAPI = {
   },
 
   reset() {
+    if (!network || !trialManager) return;
     simAPI.pause();
     trialManager = new TrialManager();
     network.resetFull();
@@ -152,6 +151,7 @@ export const simAPI = {
   },
 
   setScenario(name) {
+    if (!world) return;
     world.setScenario(name);
   },
 
@@ -162,6 +162,7 @@ export const simAPI = {
   },
 
   toggleAblation(name) {
+    if (!network || !world || !trialManager) return;
     if (name === 'learning') {
       network._learningDisabled = !network._learningDisabled;
       _ablationResults.push({
@@ -195,41 +196,75 @@ export const simAPI = {
   },
 
   getStats() {
+    if (!world || !network || !scorer || !trialManager) {
+      return {
+        energy: 0, hunger: 0, reward: 0,
+        correctEats: 0, toxicEats: 0, predatorHits: 0, nightInShelter: 0,
+        currentStep: 0, currentTrial: 0,
+        nutritionPhase: '', daylight: 1, speed: 0,
+        position: { x: 0, y: 0 }, heading: 0,
+        activityCost: 0, learningEnabled: true,
+        stepsToNightfall: 0, stepsToNutritionRotation: 0,
+        eventLog: [],
+        energyHistory: [], correctEatHistory: [], activityCostHistory: [],
+        predatorHitSteps: [],
+        chemicalHistory: [], acousticLHistory: [], acousticRHistory: [],
+        neuronCount: 0, connectionCount: 0, avgWeightMagnitude: 0,
+        M1: 0, M2: 0,
+        trialResults: [], aggregateScores: null
+      };
+    }
     const state = world.getState();
     const dl = daylight(world.currentStep);
     const stepsToNight = _computeStepsToNightfall();
+    const c = state.creature;
+    const scorerMetrics = scorer.getTrialMetrics();
+    const scorerHistory = scorer.getHistoryForCharts();
+    const avgW = network.connections.length > 0
+      ? network.connections.reduce((s, cn) => s + Math.abs(cn.weight), 0) / network.connections.length
+      : 0;
+    const nutritionRotRemain = WORLD.NUTRITION_ROTATION_STEPS - (world.currentStep % WORLD.NUTRITION_ROTATION_STEPS);
     return {
-      step: world.currentStep,
-      trial: trialManager.currentTrial,
-      totalTrials: WORLD.TOTAL_TRIALS,
-      creature: state.creature,
-      daylight: dl,
-      isNight: dl < 0.5,
-      stepsToNightfall: stepsToNight,
+      energy: c.energy,
+      hunger: c.hunger,
+      reward: c.lastReward,
+      correctEats: scorerMetrics.correctEats,
+      toxicEats: scorerMetrics.toxicEats,
+      predatorHits: scorerMetrics.predatorHits,
+      nightInShelter: scorerMetrics.shelterTiming,
+      currentStep: world.currentStep,
+      currentTrial: trialManager.currentTrial,
       nutritionPhase: state.nutritionPhase,
-      nutritionTypes: state.nutritiousTypes,
-      scorer: scorer.getTrialMetrics(),
-      scorerHistory: scorer.getHistoryForCharts(),
-      brainActivity: network.getActivityStats(),
+      daylight: dl,
+      speed: Math.sqrt(c.vx * c.vx + c.vy * c.vy),
+      position: { x: c.x, y: c.y },
+      heading: c.theta,
+      activityCost: scorerMetrics.activityCostAvg || 0,
+      learningEnabled: !network._learningDisabled,
+      stepsToNightfall: stepsToNight,
+      stepsToNutritionRotation: nutritionRotRemain,
+      eventLog: world.eventLog || [],
+      energyHistory: scorerHistory.energy || [],
+      correctEatHistory: scorerHistory.correctEatPct || [],
+      activityCostHistory: scorerHistory.activity || [],
+      predatorHitSteps: world._predatorHitSteps ? world._predatorHitSteps.slice(-20) : [],
+      chemicalHistory: world._chemicalHistory ? world._chemicalHistory.toArray() : [],
+      acousticLHistory: world._acousticLHistory ? world._acousticLHistory.toArray() : [],
+      acousticRHistory: world._acousticRHistory ? world._acousticRHistory.toArray() : [],
       neuronCount: network.neurons.filter(n => n.type !== 'input').length,
       connectionCount: network.connections.length,
+      avgWeightMagnitude: avgW,
       M1: network.M1,
       M2: network.M2,
-      timeScale: _timeScale,
-      running: _running,
-      ablations: {
-        learningDisabled: network._learningDisabled,
-        ablatedModules: [...network._ablatedModules]
-      },
-      // Gap 2: sensor history for Lovable UI charts
-      chemicalHistory: world._chemicalHistory.toArray(),
-      acousticLHistory: world._acousticLHistory.toArray(),
-      acousticRHistory: world._acousticRHistory.toArray(),
-      predatorHitSteps: world._predatorHitSteps.slice(-20)
+      trialResults: trialManager.trialResults || [],
+      aggregateScores: trialManager.isComplete() ? trialManager.getAggregateScores() : null
     };
   },
 
   getSnapshot() {
+    if (!network) {
+      return { neurons: [], connections: [], activityThisStep: 0, neuronCount: 0, moduleNeuronCounts: {}, M1: 0, M2: 0 };
+    }
     return network.getSnapshot();
   },
 
@@ -240,3 +275,4 @@ export const simAPI = {
   get scorer() { return scorer; },
   get _ablationResults() { return _ablationResults; }
 };
+

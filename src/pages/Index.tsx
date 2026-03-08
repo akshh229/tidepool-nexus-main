@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSimStore } from '@/lib/simContext';
-import simAPI from '@/lib/mockSimAPI';
+import { simAPI } from '@/simAPI.js';
 import TopHeaderBar from '@/components/TopHeaderBar';
 import WorldCanvas from '@/components/WorldCanvas';
 import BrainCanvas from '@/components/BrainCanvas';

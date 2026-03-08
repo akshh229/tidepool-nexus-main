@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import simAPI from './mockSimAPI';
+import { simAPI } from '../simAPI.js';
 import type { SimStats, SimSnapshot, NeuronDetail } from './types';
 
 interface SimStore {

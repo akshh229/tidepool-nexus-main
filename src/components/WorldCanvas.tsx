@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useSimStore } from '@/lib/simContext';
-import simAPI from '@/lib/mockSimAPI';
+import { simAPI } from '@/simAPI.js';
 import { COLORS, FONTS } from '@/lib/constants';
 import { LineChart, Line } from 'recharts';
 

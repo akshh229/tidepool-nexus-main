@@ -1,5 +1,5 @@
 import { useSimStore } from '@/lib/simContext';
-import simAPI from '@/lib/mockSimAPI';
+import { simAPI } from '@/simAPI.js';
 import { COLORS, FONTS, MAX_ENERGY } from '@/lib/constants';
 import { useEffect, useRef, useState } from 'react';
 

@@ -1,5 +1,5 @@
 import { useSimStore } from '@/lib/simContext';
-import simAPI from '@/lib/mockSimAPI';
+import { simAPI } from '@/simAPI.js';
 import { COLORS, FONTS, MAX_NEURONS, MAX_CONNECTIONS, SCORE_ROWS } from '@/lib/constants';
 import { LineChart, Line } from 'recharts';
 import type { AggregateScores } from '@/lib/types';

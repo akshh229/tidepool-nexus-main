@@ -36,6 +36,8 @@ export class Network {
     this._ablatedModules = [];
   }
 
+
+  get neuronCount() { return this.neurons.filter(n => n.type !== 'input').length; }
   addNeuron(module, type, params) {
     if (this.neurons.length >= WORLD.MAX_NEURONS) {
       console.warn('NEURON CAP REACHED (500) — skipping');

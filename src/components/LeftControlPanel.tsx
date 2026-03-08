@@ -1,5 +1,5 @@
 import { useSimStore } from '@/lib/simContext';
-import simAPI from '@/lib/mockSimAPI';
+import { simAPI } from '@/simAPI.js';
 import { COLORS, FONTS, SCENARIO_INFO } from '@/lib/constants';
 
 const LeftControlPanel = () => {
