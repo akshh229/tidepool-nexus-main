@@ -103,35 +103,57 @@ Open [http://localhost:8080](http://localhost:8080) in your browser.
 ## 📁 Project Structure
 
 ```
-src/
-├── main.tsx                  # Entry point — init brain + React app
-├── simAPI.js                 # Bridge between sim engine and React UI
-├── sim/
-│   ├── world.js              # World state, physics, environment
-│   ├── food.js               # Food sources, chemical emissions
-│   ├── predator.js           # Predator agents (Lissajous paths)
-│   ├── sensors.js            # Creature sensory input processing
-│   ├── trial.js              # Trial management (TrialManager)
-│   ├── scorer.js             # Scoring and fitness tracking
-│   └── brain/
-│       ├── network.js        # Neural network (164 neurons, 330 connections)
-│       ├── neuron.js         # Individual neuron dynamics
-│       ├── learningRule.js   # Synaptic plasticity rule
-│       └── modules/          # Brain sub-modules
-├── viz/
-│   ├── worldView.js          # Three.js 3D tidepool renderer
-│   └── brainView.js          # Three.js neural network renderer
-├── lib/
-│   └── simContext.tsx        # Zustand store — polls simAPI every 100ms
-└── components/
-    ├── TopHeaderBar.tsx      # Step counter, trial info
-    ├── WorldCanvas.tsx       # Three.js world mount
-    ├── BrainCanvas.tsx       # Three.js brain mount
-    ├── LeftControlPanel.tsx  # Scenario controls, ablation toggles
-    ├── RightBrainInspector.tsx # Live neuron firing data
-    ├── BottomHUD.tsx         # Live energy/score charts
-    ├── CentreMetrics.tsx     # Central performance metrics
-    └── KeyboardShortcuts.tsx # Keyboard bindings
+tidepool-nexus-main/
+├── index.html                        # App entry HTML
+├── vite.config.ts                    # Vite build config (esnext, Three.js optimized)
+├── tsconfig.json                     # TypeScript config (allowJs, bundler resolution)
+├── tailwind.config.ts                # Tailwind CSS config
+├── package.json                      # Dependencies & scripts
+│
+├── src/
+│   ├── main.tsx                      # 🚀 App bootstrap — init brain + mount React
+│   ├── simAPI.js                     # 🌉 Bridge — connects sim engine to React UI
+│   ├── index.css                     # Global styles
+│   │
+│   ├── ── FRONTEND ──────────────────────────────────────────
+│   │
+│   ├── pages/
+│   │   └── Index.tsx                 # Root page — assembles full dashboard layout
+│   │
+│   ├── components/
+│   │   ├── TopHeaderBar.tsx          # Title, step counter, trial info bar
+│   │   ├── WorldCanvas.tsx           # Three.js tidepool world mount point
+│   │   ├── BrainCanvas.tsx           # Three.js neural network mount point
+│   │   ├── LeftControlPanel.tsx      # Scenario selector, ablation toggles
+│   │   ├── RightBrainInspector.tsx   # Live neuron firing, module activations
+│   │   ├── BottomHUD.tsx             # Recharts live energy/score charts
+│   │   ├── CentreMetrics.tsx         # Central KPI metrics display
+│   │   └── KeyboardShortcuts.tsx     # Space=start/stop, R=reset bindings
+│   │
+│   ├── lib/
+│   │   ├── simContext.tsx            # Zustand store — polls simAPI every 100ms
+│   │   └── mockSimAPI.ts             # (Legacy) original mock — no longer used
+│   │
+│   ├── ── BACKEND / SIM ENGINE ──────────────────────────────
+│   │
+│   ├── sim/
+│   │   ├── world.js                  # World state, physics, toroidal grid
+│   │   ├── food.js                   # 4 food types, chemical pulse emissions
+│   │   ├── predator.js               # 3 predators on Lissajous patrol paths
+│   │   ├── sensors.js                # 30-float sensor vector per timestep
+│   │   ├── trial.js                  # TrialManager — 20,000 step trial loop
+│   │   ├── scorer.js                 # Fitness: survival, foraging, avoidance
+│   │   └── brain/
+│   │       ├── network.js            # Neural network (164 neurons, 330 connections)
+│   │       ├── neuron.js             # Discrete-time neuron dynamics
+│   │       ├── learningRule.js       # Local synaptic plasticity (no backprop)
+│   │       └── modules/              # Sensory, motor, memory, rhythm modules
+│   │
+│   ├── viz/
+│   │   ├── worldView.js              # Three.js 3D tidepool scene renderer
+│   │   └── brainView.js              # Three.js brain network visualizer
+│   │
+│   └── utils/                        # Shared math/helper utilities
 ```
 
 ---
