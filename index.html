@@ -1,27 +1,14 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>The Tidepool Brain</title>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html, body { width: 100%; height: 100%; overflow: hidden; background: #0a0a0f; color: #eee; font-family: system-ui, sans-serif; }
-    #app { display: flex; width: 100%; height: 100%; }
-    canvas { display: block; }
-    #world-container, #brain-container { flex: 1; position: relative; }
-    #world-canvas, #brain-canvas { width: 100%; height: 100%; }
-  </style>
-</head>
-<body>
-  <div id="app">
-    <div id="world-container">
-      <canvas id="world-canvas"></canvas>
-    </div>
-    <div id="brain-container">
-      <canvas id="brain-canvas"></canvas>
-    </div>
-  </div>
-  <script type="module" src="/src/main.js"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Tidepool Brain</title>
+    <meta name="description" content="Neural simulation with evolving creatures" />
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>
