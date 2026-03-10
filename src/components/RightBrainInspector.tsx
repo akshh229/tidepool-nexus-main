@@ -240,15 +240,15 @@ const RightBrainInspector = () => {
               {pinnedNeuron.type === 'R' ? 'Type R — Leaky Integrator' : pinnedNeuron.type === 'O' ? 'Type O — Oscillatory' : 'Input'}
             </div>
             <div style={{ fontFamily: FONTS.heading, fontSize: 20, fontWeight: 700, color: COLORS.amber, margin: '4px 0' }}>
-              {pinnedNeuron.output.toFixed(3)}
+              {(pinnedNeuron.output ?? 0).toFixed(3)}
             </div>
-            {pinnedNeuron.activityHistory.length > 0 && (
-              <LineChart width={140} height={28} data={pinnedNeuron.activityHistory.map((v, i) => ({ i, v }))}>
+            {(pinnedNeuron.activityHistory ?? []).length > 0 && (
+              <LineChart width={140} height={28} data={(pinnedNeuron.activityHistory ?? []).map((v, i) => ({ i, v }))}>
                 <Line type="monotone" dataKey="v" stroke={COLORS.amber} dot={false} strokeWidth={1.5} />
               </LineChart>
             )}
             <div style={{ fontFamily: FONTS.mono, fontSize: 10, color: COLORS.sand, marginTop: 4 }}>
-              ↓ {pinnedNeuron.inDegree} in · {pinnedNeuron.outDegree} out ↑
+              ↓ {pinnedNeuron.inDegree ?? 0} in · {pinnedNeuron.outDegree ?? 0} out ↑
             </div>
           </div>
         )}

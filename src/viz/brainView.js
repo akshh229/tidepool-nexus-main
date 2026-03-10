@@ -165,7 +165,7 @@ export class BrainView {
       const mesh = new THREE.Mesh(geo, mat);
       const p = n.position3D;
       mesh.position.set(p.x, p.y, p.z);
-      mesh.userData = { neuronId: n.id, module: n.module, type: n.type };
+      mesh.userData = { neuronId: n.id, module: n.module, type: n.type, neuron: n };
       this._neuronGroup.add(mesh);
       this.neuronMeshes.push(mesh);
     }
@@ -209,15 +209,24 @@ export class BrainView {
     this.raycaster.setFromCamera(this.mouse, this.camera);
     const hits = this.raycaster.intersectObjects(this.neuronMeshes);
     if (hits.length > 0) {
-      const nid = hits[0].object.userData.neuronId;
+      const ud = hits[0].object.userData;
+      const nid = ud.neuronId;
+      const n = ud.neuron || {};
+      const detail = {
+        ...ud,
+        output: n.output ?? 0,
+        activityHistory: n.activityHistory ?? [],
+        inDegree: n.inDegree ?? 0,
+        outDegree: n.outDegree ?? 0,
+      };
       if (eventType === 'neuronHover' && nid !== this._hoveredId) {
         if (this._hoveredId >= 0) {
           this.canvas.dispatchEvent(new CustomEvent('neuronLeave', { detail: { neuronId: this._hoveredId } }));
         }
         this._hoveredId = nid;
-        this.canvas.dispatchEvent(new CustomEvent(eventType, { detail: hits[0].object.userData }));
+        this.canvas.dispatchEvent(new CustomEvent(eventType, { detail }));
       } else if (eventType === 'neuronClick') {
-        this.canvas.dispatchEvent(new CustomEvent(eventType, { detail: hits[0].object.userData }));
+        this.canvas.dispatchEvent(new CustomEvent(eventType, { detail }));
       }
     } else if (this._hoveredId >= 0) {
       this.canvas.dispatchEvent(new CustomEvent('neuronLeave', { detail: { neuronId: this._hoveredId } }));

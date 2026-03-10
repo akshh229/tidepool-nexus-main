@@ -163,17 +163,17 @@ const BrainCanvas = () => {
           >
             {(hoveredNeuron.output ?? 0).toFixed(3)}
           </div>
-          {hoveredNeuron.activityHistory.length > 0 && (
+          {(hoveredNeuron.activityHistory ?? []).length > 0 && (
             <LineChart
               width={120}
               height={30}
-              data={hoveredNeuron.activityHistory.map((v, i) => ({ i, v }))}
+              data={(hoveredNeuron.activityHistory ?? []).map((v, i) => ({ i, v }))}
             >
               <Line type="monotone" dataKey="v" stroke={COLORS.amber} dot={false} strokeWidth={1.5} />
             </LineChart>
           )}
           <div style={{ fontFamily: FONTS.mono, fontSize: 10, color: COLORS.sand, marginTop: 4 }}>
-            ↓ {hoveredNeuron.inDegree} in · {hoveredNeuron.outDegree} out ↑
+            ↓ {hoveredNeuron.inDegree ?? 0} in · {hoveredNeuron.outDegree ?? 0} out ↑
           </div>
         </div>
       )}
