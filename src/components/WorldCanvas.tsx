@@ -34,6 +34,19 @@ const WorldCanvas = ({ isMaxView, onMaxView }: { isMaxView: boolean; onMaxView: 
     return () => observer.disconnect();
   }, []);
 
+  // Re-notify Three.js renderer when max view toggles
+  useEffect(() => {
+    const canvas = worldCanvasRef.current;
+    if (!canvas) return;
+    requestAnimationFrame(() => {
+      canvas.dispatchEvent(
+        new CustomEvent('containerResized', {
+          detail: { width: canvas.clientWidth, height: canvas.clientHeight },
+        })
+      );
+    });
+  }, [isMaxView]);
+
   const isNight = stats.daylight < 0.3;
   const toggleButtons = [
     { label: '👁', key: 'Sensors', active: sensorOverlay, toggle: toggleSensor },
