@@ -218,6 +218,7 @@ export class Network {
 // ═══════════════════════════════════════════════════════
 
 export function buildDefaultBrain(network) {
+  if (network.neurons.length > 0) return;
   // ── 30 INPUT NEURONS ─────────────────────────────────
   const inputIds = [];
   for (let i = 0; i < 30; i++)

@@ -161,7 +161,7 @@ const BrainCanvas = () => {
               marginTop: 4,
             }}
           >
-            {hoveredNeuron.output.toFixed(3)}
+            {(hoveredNeuron.output ?? 0).toFixed(3)}
           </div>
           {hoveredNeuron.activityHistory.length > 0 && (
             <LineChart
