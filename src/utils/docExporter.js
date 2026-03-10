@@ -24,7 +24,7 @@ export function exportSubmissionData(api) {
       wiringDiagram: network.getWiringDiagram(),
       learningRule: {
         type: 'Reward-modulated Hebbian with homeostatic decay',
-        hyperparameters: { ...api.network.constructor === Object ? {} : _extractHP() }
+        hyperparameters: _extractHP()
       }
     },
     trials: {

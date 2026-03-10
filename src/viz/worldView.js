@@ -25,6 +25,7 @@ export class WorldView {
     this.shelterLights = [];
     this.groundMesh = null;
     this._prevCreaturePos = null;
+    this._trailLength = 0;
   }
 
   init() {
@@ -177,9 +178,10 @@ export class WorldView {
     }
     this._prevCreaturePos = cp;
     if (this.trailPoints.length > 500) this.trailPoints.splice(0, this.trailPoints.length - 500);
-    if (this.trailPoints.length > 1) {
+    if (this.trailPoints.length > 1 && this.trailPoints.length !== this._trailLength) {
       this.trailLine.geometry.dispose();
       this.trailLine.geometry = new THREE.BufferGeometry().setFromPoints(this.trailPoints);
+      this._trailLength = this.trailPoints.length;
     }
 
     // Food

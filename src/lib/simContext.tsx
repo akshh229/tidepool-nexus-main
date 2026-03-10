@@ -1,5 +1,4 @@
 import { create } from 'zustand';
-import { simAPI } from '../simAPI.js';
 import type { SimStats, SimSnapshot, NeuronDetail } from './types';
 
 interface SimStore {
@@ -49,9 +48,31 @@ interface SimStore {
   setBrainFullscreen: (v: boolean) => void;
 }
 
+const defaultStats: SimStats = {
+  energy: 0, hunger: 0, reward: 0,
+  correctEats: 0, toxicEats: 0, predatorHits: 0, nightInShelter: 0,
+  currentStep: 0, currentTrial: 0,
+  nutritionPhase: '', daylight: 1, speed: 0,
+  position: { x: 0, y: 0 }, heading: 0,
+  activityCost: 0, learningEnabled: true,
+  stepsToNightfall: 0, stepsToNutritionRotation: 0,
+  eventLog: [],
+  energyHistory: [], correctEatHistory: [], activityCostHistory: [],
+  predatorHitSteps: [],
+  chemicalHistory: [], acousticLHistory: [], acousticRHistory: [],
+  neuronCount: 0, connectionCount: 0, avgWeightMagnitude: 0,
+  M1: 0, M2: 0,
+  trialResults: [], aggregateScores: null
+} as SimStats;
+
+const defaultSnapshot: SimSnapshot = {
+  neurons: [], connections: [], activityThisStep: 0,
+  neuronCount: 0, moduleNeuronCounts: {}, M1: 0, M2: 0
+} as SimSnapshot;
+
 export const useSimStore = create<SimStore>((set) => ({
-  stats: simAPI.getStats(),
-  snapshot: simAPI.getSnapshot(),
+  stats: defaultStats,
+  snapshot: defaultSnapshot,
   isRunning: false,
   simReady: false,
   timeScale: 1,

@@ -27,8 +27,12 @@ const BrainCanvas = ({ isMaxView, onMaxView }: { isMaxView: boolean; onMaxView: 
     simAPI.mountBrainCanvas(brainCanvasRef.current);
 
     const canvas = brainCanvasRef.current;
-    const onHover = (e: Event) => setHoveredNeuron((e as CustomEvent<NeuronDetail>).detail);
-    const onClick = (e: Event) => setPinnedNeuron((e as CustomEvent<NeuronDetail>).detail);
+    const onHover = (e: Event) => {
+      if (e instanceof CustomEvent) setHoveredNeuron(e.detail as NeuronDetail);
+    };
+    const onClick = (e: Event) => {
+      if (e instanceof CustomEvent) setPinnedNeuron(e.detail as NeuronDetail);
+    };
     const onLeave = () => setHoveredNeuron(null);
     canvas.addEventListener('neuronHover', onHover);
     canvas.addEventListener('neuronClick', onClick);

@@ -22,13 +22,16 @@ const SignalFlowModal = () => {
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="signal-flow-title"
       style={{ backgroundColor: `${COLORS.deepest}e6` }}
       onClick={() => setShow(false)}
+      onKeyDown={(e) => { if (e.key === 'Escape') setShow(false); }}
     >
       <div
-        className="animate-fadeIn"
+        className="animate-fadeIn w-full max-w-[640px] mx-4"
         style={{
-          width: 640,
           backgroundColor: COLORS.deepBrown,
           borderRadius: 16,
           borderTop: `3px solid ${COLORS.amber}`,
@@ -55,6 +58,7 @@ const SignalFlowModal = () => {
         </button>
 
         <h2
+          id="signal-flow-title"
           style={{
             fontFamily: FONTS.heading,
             fontSize: 24,
