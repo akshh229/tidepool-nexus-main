@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSimStore } from '@/lib/simContext';
 import { simAPI } from '@/simAPI.js';
 import TopHeaderBar from '@/components/TopHeaderBar';
@@ -22,6 +22,7 @@ const Index = () => {
   const simReady = useSimStore((s) => s.simReady);
   const leftPanelOpen = useSimStore((s) => s.leftPanelOpen);
   const rightPanelOpen = useSimStore((s) => s.rightPanelOpen);
+  const [maxView, setMaxView] = useState<'world' | 'brain' | null>(null);
 
   useEffect(() => {
     const loadTimer = setTimeout(() => setSimReady(true), 1500);
@@ -45,6 +46,14 @@ const Index = () => {
     };
   }, [setStats, setSnapshot, setSimReady, triggerEnergyFlash]);
 
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setMaxView(null);
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, []);
+
   const leftCol = leftPanelOpen ? '220px' : '32px';
   const rightCol = rightPanelOpen ? '240px' : '32px';
 
@@ -61,8 +70,8 @@ const Index = () => {
       <TopHeaderBar />
 
       <div className="flex w-full h-full overflow-hidden min-h-0">
-        <WorldCanvas />
-        <BrainCanvas />
+        <WorldCanvas isMaxView={maxView === 'world'} onMaxView={() => setMaxView(maxView === 'world' ? null : 'world')} />
+        <BrainCanvas isMaxView={maxView === 'brain'} onMaxView={() => setMaxView(maxView === 'brain' ? null : 'brain')} />
       </div>
 
       <BottomHUD />

@@ -13,7 +13,7 @@ const MODULE_NAMES: Record<string, string> = {
   motor: 'Motor',
 };
 
-const BrainCanvas = () => {
+const BrainCanvas = ({ isMaxView, onMaxView }: { isMaxView: boolean; onMaxView: () => void }) => {
   const brainCanvasRef = useRef<HTMLCanvasElement>(null);
   const snapshot = useSimStore((s) => s.snapshot);
   const hoveredNeuron = useSimStore((s) => s.hoveredNeuron);
@@ -54,11 +54,11 @@ const BrainCanvas = () => {
 
   return (
     <div
-      className="relative overflow-hidden flex-grow"
+      className={`relative overflow-hidden ${isMaxView ? 'fixed inset-0 z-50 w-screen h-screen' : 'flex-grow'}`}
       style={{
         backgroundColor: COLORS.deepest,
-        borderTopRightRadius: 16,
-        ...(brainFullscreen
+        ...(!isMaxView ? { borderTopRightRadius: 16 } : {}),
+        ...(brainFullscreen && !isMaxView
           ? { position: 'fixed', inset: 0, zIndex: 40, borderRadius: 0 }
           : {}),
       }}
@@ -76,6 +76,14 @@ const BrainCanvas = () => {
         >
           Neural Brain — Live
         </span>
+        <button
+          onClick={onMaxView}
+          title={isMaxView ? 'Exit Max View' : 'Max View'}
+          className="text-xs text-amber-400 hover:text-white border border-amber-400/30 hover:border-amber-400 px-2 py-0.5 rounded transition-all"
+          style={{ fontFamily: FONTS.mono, fontSize: 9 }}
+        >
+          {isMaxView ? '⊠ Exit' : '⛶ Max'}
+        </button>
         <div
           style={{
             width: 6,

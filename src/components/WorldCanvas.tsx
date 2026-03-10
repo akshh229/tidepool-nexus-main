@@ -4,7 +4,7 @@ import { simAPI } from '@/simAPI.js';
 import { COLORS, FONTS } from '@/lib/constants';
 import { LineChart, Line } from 'recharts';
 
-const WorldCanvas = () => {
+const WorldCanvas = ({ isMaxView, onMaxView }: { isMaxView: boolean; onMaxView: () => void }) => {
   const worldCanvasRef = useRef<HTMLCanvasElement>(null);
   const stats = useSimStore((s) => s.stats);
   const sensorOverlay = useSimStore((s) => s.sensorOverlay);
@@ -51,11 +51,9 @@ const WorldCanvas = () => {
 
   return (
     <div
-      className="relative overflow-hidden flex-shrink-0"
+      className={`relative overflow-hidden ${isMaxView ? 'fixed inset-0 z-50 w-screen h-screen' : 'flex-shrink-0'}`}
       style={{
-        width: '55%',
-        border: `1px solid rgba(232,168,56,0.25)`,
-        borderTopLeftRadius: 16,
+        ...(!isMaxView ? { width: '55%', border: `1px solid rgba(232,168,56,0.25)`, borderTopLeftRadius: 16 } : {}),
         backgroundColor: COLORS.deepest,
       }}
     >
@@ -73,6 +71,16 @@ const WorldCanvas = () => {
       >
         World View
       </div>
+
+      {/* Max View button */}
+      <button
+        onClick={onMaxView}
+        title={isMaxView ? 'Exit Max View' : 'Max View'}
+        className="absolute top-2 left-24 z-10 ml-auto text-xs text-amber-400 hover:text-white border border-amber-400/30 hover:border-amber-400 px-2 py-0.5 rounded transition-all"
+        style={{ fontFamily: FONTS.mono, fontSize: 9 }}
+      >
+        {isMaxView ? '⊠ Exit' : '⛶ Max'}
+      </button>
 
       <canvas
         id="worldCanvas"
