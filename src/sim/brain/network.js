@@ -94,6 +94,7 @@ export class Network {
     this.activityThisStep = 0;
     for (const n of this.neurons)
       if (n.type !== 'input') this.activityThisStep += Math.abs(n.output);
+    if (!isFinite(this.activityThisStep)) this.activityThisStep = 0;
     this.activityCostSum += this.activityThisStep;
     this.stepCount++;
 

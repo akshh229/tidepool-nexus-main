@@ -28,6 +28,7 @@ const Index = () => {
     const loadTimer = setTimeout(() => setSimReady(true), 1500);
 
     const statsInterval = setInterval(() => {
+      if (document.hidden) return;
       const s = simAPI.getStats();
       const prev = useSimStore.getState().prevPredatorHits;
       if (s.predatorHits > prev) triggerEnergyFlash();
@@ -36,6 +37,7 @@ const Index = () => {
     }, 100);
 
     const snapshotInterval = setInterval(() => {
+      if (document.hidden) return;
       setSnapshot(simAPI.getSnapshot());
     }, 500);
 

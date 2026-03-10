@@ -37,7 +37,9 @@ export const WORLD = {
   PROXIMITY_NOISE_SIGMA: 0.3,
   RAY_COUNT: 8,
   RAY_RANGE: 6.0,
+  RAY_HIT_RADIUS: 1.0,
   EAR_OFFSET: 0.3,
+  FOOD_CHEMICAL_MAX_RANGE: 40,
   MAX_NEURONS: 500,
   MAX_CONNECTIONS: 10000,
   MAX_LOOKUP_ENTRIES: 100,
@@ -169,6 +171,7 @@ export class World {
       } else {
         c.energy += WORLD.OUTSIDE_NIGHT_ENERGY * this.scenarioMods.energyDrainMult;
       }
+      c.energy = Math.max(0, c.energy);
     }
 
     // 7. Reward timer countdown

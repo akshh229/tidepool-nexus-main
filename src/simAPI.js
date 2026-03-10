@@ -113,18 +113,28 @@ export const simAPI = {
 
   // ── Canvas mounting (async + window globals) ─────────
   async mountWorldCanvas(canvas) {
-    const { WorldView } = await import('./viz/worldView.js');
-    worldView = new WorldView(canvas);
-    worldView.init();
-    window._worldView = worldView;
+    try {
+      const { WorldView } = await import('./viz/worldView.js');
+      worldView = new WorldView(canvas);
+      worldView.init();
+      window._worldView = worldView;
+    } catch (err) {
+      console.error('Failed to mount WorldView:', err);
+      emit('error', { source: 'mountWorldCanvas', error: err });
+    }
   },
 
   async mountBrainCanvas(canvas) {
     if (!network) return;
-    const { BrainView } = await import('./viz/brainView.js');
-    brainView = new BrainView(canvas);
-    brainView.init(network);
-    window._brainView = brainView;
+    try {
+      const { BrainView } = await import('./viz/brainView.js');
+      brainView = new BrainView(canvas);
+      brainView.init(network);
+      window._brainView = brainView;
+    } catch (err) {
+      console.error('Failed to mount BrainView:', err);
+      emit('error', { source: 'mountBrainCanvas', error: err });
+    }
   },
 
   // ── Control ──────────────────────────────────────────

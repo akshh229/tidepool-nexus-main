@@ -57,8 +57,7 @@ function rayPointCheck(pos, dirX, dirY, target, maxRange) {
   const perpX = v.x - dot * dirX;
   const perpY = v.y - dot * dirY;
   const perpDist = Math.sqrt(perpX * perpX + perpY * perpY);
-  // Hit radius ~1.0 unit
-  if (perpDist < 1.0) return dot;
+  if (perpDist < WORLD.RAY_HIT_RADIUS) return dot;
   return null;
 }
 
@@ -77,7 +76,7 @@ export function buildSensorVector(world) {
   sensors[2] = aR;
 
   // [3..18] proximity rays (8 rays × 2 values: distance, objType)
-  const effectiveRange = WORLD.RAY_RANGE * dl;
+  const effectiveRange = Math.max(WORLD.RAY_RANGE * dl, 0.1);
   for (let i = 0; i < 8; i++) {
     const angle = c.theta + i * (2 * Math.PI / 8);
     const [dist, objType] = castRay({ x: c.x, y: c.y }, angle, effectiveRange, world);

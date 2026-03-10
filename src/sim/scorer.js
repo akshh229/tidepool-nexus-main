@@ -89,7 +89,7 @@ export class Scorer {
     const meanAdaptSteps = this.rotationAdaptSteps.length > 0
       ? this.rotationAdaptSteps.reduce((s, v) => s + v, 0) / this.rotationAdaptSteps.length
       : T;
-    const adaptationScore = 1 / Math.log(meanAdaptSteps + Math.E);
+    const adaptationScore = Math.min(1, Math.max(0, 1 / Math.log(meanAdaptSteps + Math.E)));
     const randomBaselineHits = 3 * Math.PI * (WORLD.PREDATOR_HIT_DISTANCE ** 2)
       / (WORLD.SIZE ** 2) * T;
     const predatorAvoidance = Math.max(0, Math.min(1, 1 - (this.predatorHits / Math.max(randomBaselineHits, 1))));

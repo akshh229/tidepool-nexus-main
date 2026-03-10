@@ -37,7 +37,7 @@ export class FoodManager {
         const dx = torusDist(cx, src.x, WORLD.SIZE);
         const dy = torusDist(cy, src.y, WORLD.SIZE);
         const d = Math.sqrt(dx * dx + dy * dy);
-        if (d > 40) continue; // max range for performance
+        if (d > WORLD.FOOD_CHEMICAL_MAX_RANGE) continue;
         const delay = Math.round(d / WORLD.V_CHEM);
         const emissionDelayed = src.emissionBuffer.get(delay);
         signal += emissionDelayed / Math.max(d, 0.5);

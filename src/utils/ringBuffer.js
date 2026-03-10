@@ -1,7 +1,7 @@
 export class RingBuffer {
   constructor(size) {
-    this.size = size;
-    this.buf = new Float32Array(size);
+    this.size = Math.max(1, Math.floor(size));
+    this.buf = new Float32Array(this.size);
     this.head = 0;
   }
   push(val) {
