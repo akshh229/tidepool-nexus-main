@@ -21,7 +21,7 @@ export class TrialManager {
       seed: trialIndex,
       foodPositions: Object.fromEntries(
         ['A', 'B', 'C', 'D'].map(type => [type,
-          Array.from({ length: 30 }, () => ({ x: rng() * 100, y: rng() * 100 }))
+          Array.from({ length: Math.ceil(30 / 4) }, () => ({ x: rng() * 100, y: rng() * 100 }))
         ])
       ),
       nutritionStartPhase: Math.floor(rng() * 4),

@@ -14,6 +14,7 @@ let _rafId = null;
 let _highlightedModule = null;
 let _ablationResults = [];
 let _initialized = false;
+let _trialEndPending = false;
 
 // ── Internal helpers ───────────────────────────────────
 
@@ -23,14 +24,20 @@ function _startFirstTrial() {
 }
 
 function _onTrialEnd() {
-  const metrics = scorer.getTrialMetrics();
-  trialManager.recordTrialResult(metrics);
+  if (_trialEndPending) return;
+  _trialEndPending = true;
+  try {
+    const metrics = scorer.getTrialMetrics();
+    trialManager.recordTrialResult(metrics);
 
-  if (trialManager.isComplete()) {
-    emit('allTrialsComplete', trialManager.getAggregateScores());
-  } else {
-    trialManager.startNextTrial(world, network);
-    scorer.reset();
+    if (trialManager.isComplete()) {
+      emit('allTrialsComplete', trialManager.getAggregateScores());
+    } else {
+      trialManager.startNextTrial(world, network);
+      scorer.reset();
+    }
+  } finally {
+    _trialEndPending = false;
   }
 }
 

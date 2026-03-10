@@ -9,8 +9,8 @@ const mockSimAPI = {
   toggleModule: (_name: string) => {},
   toggleAblation: (_name: string) => {},
   exportData: () => {},
-  mountWorldCanvas: (_canvas: HTMLCanvasElement) => {},
-  mountBrainCanvas: (_canvas: HTMLCanvasElement) => {},
+  mountWorldCanvas: async (_canvas: HTMLCanvasElement) => {},
+  mountBrainCanvas: async (_canvas: HTMLCanvasElement) => {},
 
   getStats: (): SimStats => ({
     energy: 142,

@@ -9,7 +9,8 @@ export class RingBuffer {
     this.head++;
   }
   get(stepsAgo) {
-    return this.buf[((this.head - 1 - stepsAgo) % this.size + this.size) % this.size];
+    const clamped = Math.min(Math.max(0, stepsAgo), this.size - 1);
+    return this.buf[((this.head - 1 - clamped) % this.size + this.size) % this.size];
   }
   toArray() {
     const arr = [];

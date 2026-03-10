@@ -36,17 +36,17 @@ export class Scorer {
       this.nightSteps++;
       if (inShelter) this.nightInShelterSteps++;
     }
-    if (this.prevPos) {
+    if (pos && this.prevPos) {
       const dx = torusDist(pos.x, this.prevPos.x, WORLD.SIZE);
       const dy = torusDist(pos.y, this.prevPos.y, WORLD.SIZE);
       this.totalPathLength += Math.sqrt(dx * dx + dy * dy);
     }
-    if (nearestGoalPos) {
+    if (pos && nearestGoalPos) {
       const gx = torusDist(pos.x, nearestGoalPos.x, WORLD.SIZE);
       const gy = torusDist(pos.y, nearestGoalPos.y, WORLD.SIZE);
       this.straightLineSum += Math.sqrt(gx * gx + gy * gy);
     }
-    this.prevPos = { ...pos };
+    if (pos) this.prevPos = { ...pos };
     this.activityCostSum += activityThisStep;
     this.neuronCount = neuronCount;
     if (this.trackingAdaptation && this.stepsAfterRotation !== null)
@@ -92,11 +92,11 @@ export class Scorer {
     const adaptationScore = 1 / Math.log(meanAdaptSteps + Math.E);
     const randomBaselineHits = 3 * Math.PI * (WORLD.PREDATOR_HIT_DISTANCE ** 2)
       / (WORLD.SIZE ** 2) * T;
-    const predatorAvoidance = 1 - (this.predatorHits / Math.max(randomBaselineHits, 1));
+    const predatorAvoidance = Math.max(0, Math.min(1, 1 - (this.predatorHits / Math.max(randomBaselineHits, 1))));
     const shelterTiming = this.nightSteps > 0
       ? this.nightInShelterSteps / this.nightSteps : 1;
-    const navigationEfficiency = this.totalPathLength > 0
-      ? this.straightLineSum / this.totalPathLength : 0;
+    const navigationEfficiency = Math.min(1, this.totalPathLength > 0
+      ? this.straightLineSum / this.totalPathLength : 0);
     const activityCostAvg = this.activityCostSum / T;
     const funcPerf = (survivalFraction + Math.max(foragingAccuracy, 0) + shelterTiming) / 3;
     const activityEfficiency = funcPerf / Math.max(activityCostAvg * this.neuronCount, 0.001);

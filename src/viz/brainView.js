@@ -248,13 +248,14 @@ export class BrainView {
 
   update(snapshot) {
     if (!snapshot) return;
-    // Update neuron glow by output activity
+    // Update neuron glow by output activity and refresh userData for raycasting
     for (const nData of snapshot.neurons) {
       const mesh = this.neuronMeshes[nData.id];
       if (!mesh) continue;
       const act = Math.abs(nData.output);
       mesh.material.emissiveIntensity = 0.1 + act * 0.8;
       mesh.scale.setScalar(0.8 + act * 0.6);
+      mesh.userData.neuron = nData;
     }
   }
 

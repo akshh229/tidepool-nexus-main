@@ -30,7 +30,9 @@ const BottomHUD = () => {
   useEffect(() => {
     if (stats.correctEats > prevCorrect.current) {
       setBumpCorrect(true);
-      setTimeout(() => setBumpCorrect(false), 100);
+      const t = setTimeout(() => setBumpCorrect(false), 100);
+      prevCorrect.current = stats.correctEats;
+      return () => clearTimeout(t);
     }
     prevCorrect.current = stats.correctEats;
   }, [stats.correctEats]);
@@ -38,7 +40,9 @@ const BottomHUD = () => {
   useEffect(() => {
     if (stats.toxicEats > prevToxic.current) {
       setBumpToxic(true);
-      setTimeout(() => setBumpToxic(false), 100);
+      const t = setTimeout(() => setBumpToxic(false), 100);
+      prevToxic.current = stats.toxicEats;
+      return () => clearTimeout(t);
     }
     prevToxic.current = stats.toxicEats;
   }, [stats.toxicEats]);
@@ -46,7 +50,9 @@ const BottomHUD = () => {
   useEffect(() => {
     if (stats.predatorHits > prevPredator.current) {
       setBumpPredator(true);
-      setTimeout(() => setBumpPredator(false), 100);
+      const t = setTimeout(() => setBumpPredator(false), 100);
+      prevPredator.current = stats.predatorHits;
+      return () => clearTimeout(t);
     }
     prevPredator.current = stats.predatorHits;
   }, [stats.predatorHits]);

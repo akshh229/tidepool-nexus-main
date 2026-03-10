@@ -13,8 +13,10 @@ const KeyboardShortcuts = () => {
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      // Don't capture when typing in inputs
-      if ((e.target as HTMLElement).tagName === 'INPUT') return;
+      // Don't capture when typing in form controls
+      const tag = (e.target as HTMLElement).tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' ||
+          (e.target as HTMLElement).getAttribute('contenteditable') === 'true') return;
 
       if (e.code === 'Space') {
         e.preventDefault();

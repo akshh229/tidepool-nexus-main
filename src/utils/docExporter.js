@@ -1,3 +1,5 @@
+import { HP } from '../sim/brain/learningRule.js';
+
 export function exportSubmissionData(api) {
   const network = api.network;
   const trialManager = api.trialManager;
@@ -56,12 +58,5 @@ function _getModuleSummary(network) {
 }
 
 function _extractHP() {
-  // Dynamic import would be circular; just inline the key values
-  return {
-    ETA: 0.005,
-    DECAY: 0.0001,
-    M1_TAU: 0.02,
-    M2_TAU: 0.005,
-    WEIGHT_CAP: 3.0
-  };
+  return { ...HP };
 }
