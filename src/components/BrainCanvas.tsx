@@ -41,6 +41,7 @@ const BrainCanvas = ({ isMaxView, onMaxView }: { isMaxView: boolean; onMaxView: 
       );
     });
     if (canvas.parentElement) observer.observe(canvas.parentElement);
+    observer.observe(canvas);
 
     return () => {
       canvas.removeEventListener('neuronHover', onHover);
@@ -50,17 +51,17 @@ const BrainCanvas = ({ isMaxView, onMaxView }: { isMaxView: boolean; onMaxView: 
     };
   }, [setHoveredNeuron, setPinnedNeuron]);
 
-  // Re-notify Three.js renderer when max view toggles
   useEffect(() => {
     const canvas = brainCanvasRef.current;
     if (!canvas) return;
-    requestAnimationFrame(() => {
+    const frame = requestAnimationFrame(() => {
       canvas.dispatchEvent(
         new CustomEvent('containerResized', {
           detail: { width: canvas.clientWidth, height: canvas.clientHeight },
         })
       );
     });
+    return () => cancelAnimationFrame(frame);
   }, [isMaxView]);
 
   const modules = Object.entries(snapshot.moduleNeuronCounts) as [string, number][];

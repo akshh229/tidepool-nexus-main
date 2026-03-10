@@ -31,20 +31,21 @@ const WorldCanvas = ({ isMaxView, onMaxView }: { isMaxView: boolean; onMaxView: 
     });
     if (worldCanvasRef.current.parentElement)
       observer.observe(worldCanvasRef.current.parentElement);
+    observer.observe(worldCanvasRef.current);
     return () => observer.disconnect();
   }, []);
 
-  // Re-notify Three.js renderer when max view toggles
   useEffect(() => {
     const canvas = worldCanvasRef.current;
     if (!canvas) return;
-    requestAnimationFrame(() => {
+    const frame = requestAnimationFrame(() => {
       canvas.dispatchEvent(
         new CustomEvent('containerResized', {
           detail: { width: canvas.clientWidth, height: canvas.clientHeight },
         })
       );
     });
+    return () => cancelAnimationFrame(frame);
   }, [isMaxView]);
 
   const isNight = stats.daylight < 0.3;
