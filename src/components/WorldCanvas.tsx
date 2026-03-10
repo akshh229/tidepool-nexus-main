@@ -5,6 +5,7 @@ import { COLORS, FONTS } from '@/lib/constants';
 import { LineChart, Line } from 'recharts';
 
 const WorldCanvas = ({ isMaxView, onMaxView }: { isMaxView: boolean; onMaxView: () => void }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
   const worldCanvasRef = useRef<HTMLCanvasElement>(null);
   const stats = useSimStore((s) => s.stats);
   const sensorOverlay = useSimStore((s) => s.sensorOverlay);
@@ -20,32 +21,46 @@ const WorldCanvas = ({ isMaxView, onMaxView }: { isMaxView: boolean; onMaxView: 
     if (!worldCanvasRef.current) return;
     simAPI.mountWorldCanvas(worldCanvasRef.current);
     const observer = new ResizeObserver(() => {
+      const container = containerRef.current;
       const canvas = worldCanvasRef.current;
-      if (canvas) {
+      if (container && canvas) {
+        const w = container.clientWidth;
+        const h = container.clientHeight;
         canvas.dispatchEvent(
           new CustomEvent('containerResized', {
-            detail: { width: canvas.clientWidth, height: canvas.clientHeight },
+            detail: { width: w, height: h },
           })
         );
       }
     });
-    if (worldCanvasRef.current.parentElement)
-      observer.observe(worldCanvasRef.current.parentElement);
-    observer.observe(worldCanvasRef.current);
+    observer.observe(containerRef.current ?? worldCanvasRef.current);
     return () => observer.disconnect();
   }, []);
 
   useEffect(() => {
-    const canvas = worldCanvasRef.current;
-    if (!canvas) return;
-    const frame = requestAnimationFrame(() => {
-      canvas.dispatchEvent(
-        new CustomEvent('containerResized', {
-          detail: { width: canvas.clientWidth, height: canvas.clientHeight },
-        })
-      );
+    if (!isMaxView) return;
+    let raf1: number;
+    let raf2: number;
+    raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
+        const container = containerRef.current;
+        if (!container) return;
+        const w = container.clientWidth;
+        const h = container.clientHeight - 40;
+        const canvas = worldCanvasRef.current;
+        if (canvas) {
+          canvas.dispatchEvent(
+            new CustomEvent('containerResized', {
+              detail: { width: w, height: h },
+            })
+          );
+        }
+      });
     });
-    return () => cancelAnimationFrame(frame);
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+    };
   }, [isMaxView]);
 
   const isNight = stats.daylight < 0.3;
@@ -65,11 +80,27 @@ const WorldCanvas = ({ isMaxView, onMaxView }: { isMaxView: boolean; onMaxView: 
 
   return (
     <div
-      className={`relative overflow-hidden ${isMaxView ? 'fixed inset-0 z-50 w-screen h-screen' : 'flex-shrink-0'}`}
-      style={{
-        ...(!isMaxView ? { width: '55%', border: `1px solid rgba(232,168,56,0.25)`, borderTopLeftRadius: 16 } : {}),
-        backgroundColor: COLORS.deepest,
-      }}
+      ref={containerRef}
+      className={`overflow-hidden ${isMaxView ? '' : 'relative flex-shrink-0'}`}
+      style={isMaxView
+        ? {
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            zIndex: 9999,
+            backgroundColor: '#000',
+            display: 'flex',
+            flexDirection: 'column' as const,
+          }
+        : {
+            width: '55%',
+            border: `1px solid rgba(232,168,56,0.25)`,
+            borderTopLeftRadius: 16,
+            backgroundColor: COLORS.deepest,
+          }
+      }
     >
       {/* Label */}
       <div
@@ -99,7 +130,10 @@ const WorldCanvas = ({ isMaxView, onMaxView }: { isMaxView: boolean; onMaxView: 
       <canvas
         id="worldCanvas"
         ref={worldCanvasRef}
-        style={{ display: 'block', width: '100%', height: '100%' }}
+        style={isMaxView
+          ? { display: 'block', width: '100%', height: '100%' }
+          : { display: 'block', width: '100%', height: '100%' }
+        }
       />
 
       {/* Top-right overlays */}

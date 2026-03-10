@@ -89,6 +89,12 @@ const Index = () => {
         <RightBrainInspector />
       </div>
 
+      {maxView && (
+        <div
+          className="fixed inset-0 z-[9998] bg-black/70"
+          onClick={() => setMaxView(null)}
+        />
+      )}
       {showSignalFlowModal && <SignalFlowModal />}
       {!simReady && <LoadingScreen />}
       <KeyboardShortcuts />
