@@ -163,15 +163,14 @@ const LeftControlPanel = () => {
           <div className="mt-4 pt-4 border-t border-dashed border-amber-500/20">
             <button
               onClick={() => {
-                alert("Initiating parallel Auto-Ablation runs...\nThis will automatically ablate modules one by one, score them against a baseline, and report importances.");
+                useSimStore.getState().setShowAblationModal(true);
               }}
-              className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded"
+              className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded transition-opacity hover:opacity-80"
               style={{
                 fontFamily: FONTS.mono,
                 fontSize: 10,
                 color: COLORS.deepBrown,
                 backgroundColor: COLORS.amber,
-                opacity: 0.9,
               }}
             >
               <span>🔬 AI Ablation Analysis</span>

@@ -11,6 +11,7 @@ import RightBrainInspector from '@/components/RightBrainInspector';
 import SignalFlowModal from '@/components/SignalFlowModal';
 import AICoachModal from '@/components/AICoachModal';
 import AIBuilderModal from '@/components/AIBuilderModal';
+import AIAblationModal from '@/components/AIAblationModal';
 import LoadingScreen from '@/components/LoadingScreen';
 import KeyboardShortcuts from '@/components/KeyboardShortcuts';
 import { COLORS } from '@/lib/constants';
@@ -102,6 +103,7 @@ const Index = () => {
       {showSignalFlowModal && <SignalFlowModal />}
       <AICoachModal />
       <AIBuilderModal />
+      <AIAblationModal />
       {!simReady && <LoadingScreen />}
       <KeyboardShortcuts />
     </div>
