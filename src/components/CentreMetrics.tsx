@@ -10,8 +10,26 @@ import {
 } from 'recharts';
 import { useMemo } from 'react';
 
+import { aiService } from '@/lib/aiService';
+import { useState } from 'react';
+import { RefreshCcw, Activity } from 'lucide-react';
+
 const CentreMetrics = () => {
   const stats = useSimStore((s) => s.stats);
+  const [analyzingDrift, setAnalyzingDrift] = useState(false);
+  const [driftResult, setDriftResult] = useState<any>(null);
+
+  const analyzeDrift = async () => {
+    setAnalyzingDrift(true);
+    try {
+      const res = await aiService.detectStrategyDrift([stats]);
+      setDriftResult(res);
+      setTimeout(() => setDriftResult(null), 8000); // clear after 8s
+    } catch (e) {
+      console.error(e);
+    }
+    setAnalyzingDrift(false);
+  };
 
   const energyData = useMemo(
     () => stats.energyHistory.map((v, i) => ({ i, v })),
@@ -107,9 +125,31 @@ const CentreMetrics = () => {
 
   return (
     <div
-      className="flex gap-3 p-3 overflow-hidden"
+      className="flex gap-3 p-3 overflow-hidden relative"
       style={{ backgroundColor: COLORS.deepBrown }}
     >
+      {driftResult && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-top-4 flex items-center gap-2 px-4 py-2 rounded-full shadow-[0_0_20px_rgba(239,68,68,0.3)] bg-red-950/90 border border-red-500/30 backdrop-blur-md">
+          <Activity size={14} className="text-red-400" />
+          <span className="text-red-200 text-xs font-mono font-bold tracking-wider uppercase">
+            Strategy Drift Detected
+          </span>
+          <span className="text-red-100/70 text-xs font-body ml-2">
+            {driftResult.degradingBehaviors[0]}
+          </span>
+        </div>
+      )}
+
+      {/* Analyze Drift Button overlay */}
+      <button
+        onClick={analyzeDrift}
+        disabled={analyzingDrift}
+        className="absolute top-4 right-4 z-40 p-1.5 rounded-full bg-black/40 border border-white/10 hover:bg-white/10 transition-colors disabled:opacity-50"
+        title="AI Strategy Drift Detector"
+      >
+        <RefreshCcw size={12} color={COLORS.sand} className={analyzingDrift ? 'animate-spin' : ''} />
+      </button>
+
       {charts.map((chart, idx) => (
         <div
           key={idx}

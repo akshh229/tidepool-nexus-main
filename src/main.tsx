@@ -5,6 +5,7 @@ import { TrialManager } from './sim/trial.js';
 import { Scorer } from './sim/scorer.js';
 import { simAPI } from './simAPI.js';
 import App from "./App.tsx";
+import { AuthProvider } from "./lib/AuthContext";
 import "./index.css";
 
 const world = new World();
@@ -14,4 +15,4 @@ const scorer = new Scorer();
 buildDefaultBrain(network);
 simAPI._init({ world, network, trialManager, scorer });
 
-createRoot(document.getElementById("root")!).render(<App />);
+createRoot(document.getElementById("root")!).render(<AuthProvider><App /></AuthProvider>);

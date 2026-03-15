@@ -9,6 +9,8 @@ import LeftControlPanel from '@/components/LeftControlPanel';
 import CentreMetrics from '@/components/CentreMetrics';
 import RightBrainInspector from '@/components/RightBrainInspector';
 import SignalFlowModal from '@/components/SignalFlowModal';
+import AICoachModal from '@/components/AICoachModal';
+import AIBuilderModal from '@/components/AIBuilderModal';
 import LoadingScreen from '@/components/LoadingScreen';
 import KeyboardShortcuts from '@/components/KeyboardShortcuts';
 import { COLORS } from '@/lib/constants';
@@ -98,6 +100,8 @@ const Index = () => {
         />
       )}
       {showSignalFlowModal && <SignalFlowModal />}
+      <AICoachModal />
+      <AIBuilderModal />
       {!simReady && <LoadingScreen />}
       <KeyboardShortcuts />
     </div>

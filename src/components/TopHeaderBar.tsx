@@ -1,11 +1,14 @@
 import { useSimStore } from '@/lib/simContext';
 import { COLORS, FONTS, MAX_STEPS, MAX_TRIALS } from '@/lib/constants';
 import { useState } from 'react';
+import { Bot, Sparkles } from 'lucide-react';
 
 const TopHeaderBar = () => {
   const stats = useSimStore((s) => s.stats);
   const isRunning = useSimStore((s) => s.isRunning);
   const simReady = useSimStore((s) => s.simReady);
+  const setShowAICoachModal = useSimStore((s) => s.setShowAICoachModal);
+  const setShowAIBuilderModal = useSimStore((s) => s.setShowAIBuilderModal);
   const [showShortcuts, setShowShortcuts] = useState(false);
 
   const statusLabel = !simReady ? 'INITIALISING' : isRunning ? 'RUNNING' : 'PAUSED';
@@ -130,26 +133,63 @@ const TopHeaderBar = () => {
           </div>
         </div>
 
-        {/* Keyboard shortcut button */}
-        <div className="relative">
+        <div className="flex gap-2">
+          {/* AI Coach */}
           <button
-            className="flex items-center justify-center"
+            onClick={() => setShowAICoachModal(true)}
+            className="flex items-center justify-center transition-opacity hover:opacity-80"
+            title="AI Expeiment Coach"
             style={{
               width: 28,
               height: 28,
               borderRadius: 6,
-              backgroundColor: COLORS.midDark,
+              backgroundColor: `${COLORS.amber}22`,
               color: COLORS.amber,
-              fontFamily: FONTS.mono,
-              fontSize: 14,
-              border: 'none',
+              border: `1px solid ${COLORS.amber}66`,
               cursor: 'pointer',
             }}
-            onMouseEnter={() => setShowShortcuts(true)}
-            onMouseLeave={() => setShowShortcuts(false)}
           >
-            ⌨
+            <Bot size={16} />
           </button>
+
+          {/* AI Builder */}
+          <button
+            onClick={() => setShowAIBuilderModal(true)}
+            className="flex items-center justify-center transition-opacity hover:opacity-80"
+            title="AI Scenario Builder"
+            style={{
+              width: 28,
+              height: 28,
+              borderRadius: 6,
+              backgroundColor: `${COLORS.softCream}22`,
+              color: COLORS.softCream,
+              border: `1px solid ${COLORS.softCream}66`,
+              cursor: 'pointer',
+            }}
+          >
+            <Sparkles size={16} />
+          </button>
+
+          {/* Keyboard shortcut button */}
+          <div className="relative">
+            <button
+              className="flex items-center justify-center"
+              style={{
+                width: 28,
+                height: 28,
+                borderRadius: 6,
+                backgroundColor: COLORS.midDark,
+                color: COLORS.amber,
+                fontFamily: FONTS.mono,
+                fontSize: 14,
+                border: 'none',
+                cursor: 'pointer',
+              }}
+              onMouseEnter={() => setShowShortcuts(true)}
+              onMouseLeave={() => setShowShortcuts(false)}
+            >
+              ⌨
+            </button>
           {showShortcuts && (
             <div
               className="absolute top-full right-0 mt-2 animate-fadeIn"
@@ -173,6 +213,7 @@ const TopHeaderBar = () => {
               {`Space   Play / Pause\nR       Reset\nS       Sensors overlay\nC       Currents overlay\nB       Brain fullscreen\nEsc     Close modals`}
             </div>
           )}
+          </div>
         </div>
       </div>
     </header>

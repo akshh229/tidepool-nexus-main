@@ -46,6 +46,10 @@ interface SimStore {
   toggleAblation: (key: keyof SimStore['ablations']) => void;
   triggerEnergyFlash: () => void;
   setBrainFullscreen: (v: boolean) => void;
+  showAICoachModal: boolean;
+  setShowAICoachModal: (v: boolean) => void;
+  showAIBuilderModal: boolean;
+  setShowAIBuilderModal: (v: boolean) => void;
 }
 
 const defaultStats: SimStats = {
@@ -87,6 +91,8 @@ export const useSimStore = create<SimStore>((set) => ({
   rightPanelOpen: true,
   showSignalFlowModal: false,
   showScoreBreakdown: false,
+  showAICoachModal: false,
+  showAIBuilderModal: false,
   brainFullscreen: false,
   ablations: { disableLearning: false, noPredatorModule: false, noShelterTiming: false },
   prevPredatorHits: 0,
@@ -108,6 +114,8 @@ export const useSimStore = create<SimStore>((set) => ({
   setRightPanelOpen: (v) => set({ rightPanelOpen: v }),
   setShowSignalFlowModal: (v) => set({ showSignalFlowModal: v }),
   setShowScoreBreakdown: (v) => set({ showScoreBreakdown: v }),
+  setShowAICoachModal: (v) => set({ showAICoachModal: v }),
+  setShowAIBuilderModal: (v) => set({ showAIBuilderModal: v }),
   toggleAblation: (key) =>
     set((s) => ({
       ablations: { ...s.ablations, [key]: !s.ablations[key] },
